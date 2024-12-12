@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROLLS ROYCE BOAT TAIL</title>
+    <style>
+      
+    header {
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(174, 46, 46);
+    
+    top: 0;
+    left: 0;
+    
+    padding: 0;
+    margin: 0;
+}
+#header #header-content {
+    margin: 10px;
+}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url("https://www.jetsetmag.com/wp-content/uploads/2021/07/rolls-royce-boat-tail.jpg");
+            background-size: cover; 
+            background-repeat: no-repeat; 
+            background-attachment: fixed; 
+            height: 100vh; 
+            color: #333; 
+        }
+
+        header {
+            background: rgba(51, 51, 51, 0.8); 
+            color: #fff;
+            padding: 10px 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        section {
+            background: rgba(255, 255, 255, 0.9); 
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        #carousel-images {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            height: 550px;
+        }
+
+        #carousel-images img {
+            width: 100%;
+            display: none; 
+            border-radius: 8px;
+        }
+
+        #carousel-images img.active {
+            display: block;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        input[type="radio"] {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ROLLS ROYCE BOAT TAIL</h1>
+    </header>
+
+    <section id="quiz">
+        <h2>Interactive Quiz</h2>
+        <div id="quiz-container"></div>
+        <button id="submit-btn">Submit</button>
+        <div id="result"></div>
+    </section>
+
+    <section id="carousel">
+        <h2>Image Carousel</h2>
+        <div id="carousel-images">
+            <img src="https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/coachbuild--boat-tail/page-components/01.jpg/jcr:content/renditions/cq5dam.web.1668.webp" alt="Image 1" class="active">
+            <img src="https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/coachbuild--boat-tail/page-components/03.jpg/jcr:content/renditions/original" alt="Image 2">
+            <img src="https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/coachbuild--boat-tail/page-components/02.jpg/jcr:content/renditions/cq5dam.web.1668.webp" alt="Image 3">
+        </div>
+        <button id="prev">Previous</button>
+        <button id="next">Next</button>
+    </section>
+
+    <section id="api-data">
+        <h2>API Data</h2>
+        <button id="fetch-btn">Fetch Data</button>
+        <div id="api-results"></div>
+    </section>
+
+    <script>
+        
+        const questions = [
+    {
+        question: "In which year was Rolls-Royce founded?",
+        answers: ["1904", "1910", "1920"],
+        correct: "1904"
+    },
+    {
+        question: "What is the name of the emblem that Rolls-Royce uses?",
+        answers: ["Spirit of Ecstasy", "Flying Lady", "Phantom Lady"],
+        correct: "Spirit of Ecstasy"
+    }
+];
+
+        const quizContainer = document.getElementById('quiz-container');
+        questions.forEach((q, index) => {
+            const questionElem = document.createElement('div');
+            questionElem.innerHTML = `<p>${q.question}</p>`;
+            q.answers.forEach(answer => {
+                questionElem.innerHTML += `<input type="radio" name="question${index}" value="${answer}">${answer}<br>`;
+            });
+            quizContainer.appendChild(questionElem);
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', () => {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selected && selected.value === q.correct) {
+                    score++;
+                }
+            });
+            document.getElementById('result').innerText = `Your score: ${score} out of ${questions.length}`;
+        });
+
+
+        let index = 0;
+        const images = document.querySelectorAll('#carousel-images img');
+        const showImage = (i) => {
+            images.forEach((img, idx) => img.classList.toggle('active', idx === i));
+        };
+
+        document.getElementById('next').addEventListener('click', () => {
+            index = (index + 1) % images.length;
+            showImage(index);
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+            index = (index - 1 + images.length) % images.length;
+            showImage(index);
+        });
+
+        document.getElementById('fetch-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('https://api.chucknorris.io/jokes/random'); 
+                const data = await response.json();
+                document.getElementById('api-results').innerText = data.value;
+            } catch (error) {
+                document.getElementById('api-results').innerText = 'Error fetching data.';
+            }
+        });
+    </script>
+</body>
+</html>
