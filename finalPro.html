@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy N Sell</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background-color: #1A237E;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #FFC107;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            font-size: 1.2em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .controls select,
+        .controls input {
+            padding: 10px;
+            margin: 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .controls input {
+            width: 200px;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 10px;
+        }
+
+        .product {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            width: 240px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .product img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .product h2 {
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+
+        .product p {
+            font-size: 1.3em;
+            color: #FF5722;
+            margin: 10px 0;
+        }
+
+        .product button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .product button:hover {
+            background-color: #45a049;
+        }
+
+        .rating {
+            color: #FFD700; /* Gold color for stars */
+        }
+
+        .sell-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            padding: 10px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .sell-form input, .sell-form select {
+            margin: 5px;
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .sell-form button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .sell-form button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 600px) {
+            .products {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Welcome to Buy N Sell</h1>
+        <p>Your place to buy and sell used electronic devices</p>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="search" placeholder="Search Products.">
+        <select id="sort">
+            <option value="default">Sort By</option>
+            <option value="priceLow">Price: Low to High</option>
+            <option value="priceHigh">Price: High to Low</option>
+        </select>
+        <select id="category">
+            <option value="all">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="accessories">Accessories</option>
+        </select>
+        <button id="cart-button">Cart (0)</button>
+    </div>
+
+    <div class="products" id="product-list">
+        <!-- Dynamic product elements will be populated here -->
+    </div>
+
+    <!-- Sell Your Product Section -->
+    <div class="sell-form">
+        <h3>Sell Your Product</h3>
+        <input type="text" id="product-name" placeholder="Product Name" required>
+        <input type="number" id="product-price" placeholder="Price" required min="0">
+        <input type="text" id="product-image" placeholder="Image URL" required>
+        <input type="number" id="product-rating" placeholder="Rating (1-5)" required min="1" max="5">
+        <select id="product-category">
+            <option value="electronics">Electronics</option>
+            <option value="accessories">Accessories</option>
+        </select>
+        <button id="sell-button">Add Product</button>
+    </div>
+
+    <script>
+       const products = [
+            { id: 1, name: "Used Laptop", price: 299.99, image: "https://sathya.in/media/95840/catalog/tuf003.jpg", rating: 4 },
+            { id: 2, name: "Smartphone", price: 199.99, image: "https://cdn1.smartprix.com/rx-ijrsGvn2I-w1200-h1200/jrsGvn2I.jpg", rating: 5 },
+            { id: 3, name: "Digital Camera", price: 149.99, image: "https://x.imastudent.com/content/0004905_sony-cybershot-dsc-rx10-mark-iv-digital-camera_500.jpeg", rating: 3 },
+            { id: 4, name: "Tablet", price: 249.99, image: "https://p3-ofp.static.pub/fes/cms/2023/02/22/5rhddw9d8vm9xfkexcwzvvi9lindg8985574.png", rating: 4 },
+            { id: 5, name: "Headphones", price: 49.99, image: "https://www.headphonezone.in/cdn/shop/products/Headphone-Zone-Sony-WH-CH720N-19.jpg?v=1679485347&width=2048", rating: 5 },
+            { id: 6, name: "Smartwatch", price: 99.99, image: "https://m.media-amazon.com/images/I/61ZjlBOp+rL.jpg", rating: 2 },
+        ];
+
+
+        const cart = [];
+
+        function createProductHTML(product) {
+            return `
+                <div class="product">
+                    <img src="${product.image}" alt="${product.name}" loading="lazy">
+                    <h2>${product.name}</h2>
+                    <p>$${product.price.toFixed(2)}</p>
+                    <div class="rating">${'★'.repeat(product.rating)}${'☆'.repeat(5 - product.rating)}</div>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                </div>
+            `;
+        }
+
+        function renderProducts(filteredProducts) {
+            document.getElementById('product-list').innerHTML = filteredProducts.map(createProductHTML).join('');
+            updateCartCount();
+        }
+
+        function filterProducts() {
+            const searchQuery = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('category').value;
+            const filteredProducts = products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchQuery);
+                const matchesCategory = category === 'all' || product.category === category;
+                return matchesSearch && matchesCategory;
+            });
+            renderProducts(filteredProducts);
+        }
+
+        function sortProducts() {
+            const sortValue = document.getElementById('sort').value;
+            let sortedProducts = [...products]; // Clone the array to avoid mutation
+
+            if (sortValue === 'priceLow') {
+                sortedProducts.sort((a, b) => a.price - b.price);
+            } else if (sortValue === 'priceHigh') {
+                sortedProducts.sort((a, b) => b.price - a.price);
+            }
+
+            renderProducts(sortedProducts);
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCartCount();
+            alert(`${product.name} has been added to your cart!`);
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-button').innerText = `Cart (${cart.length})`;
+        }
+
+        document.getElementById('search').addEventListener('input', filterProducts);
+        document.getElementById('sort').addEventListener('change', () => {
+            sortProducts();
+            filterProducts();
+        });
+        document.getElementById('category').addEventListener('change', filterProducts);
+
+        // Add new product to the list
+        document.getElementById('sell-button').addEventListener('click', () => {
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const image = document.getElementById('product-image').value;
+            const rating = parseInt(document.getElementById('product-rating').value);
+            const category = document.getElementById('product-category').value;
+
+            // Validate inputs
+            if (name && !isNaN(price) && image && !isNaN(rating)) {
+                const newProduct = {
+                    id: products.length + 1, // Simple ID generation
+                    name,
+                    price,
+                    image,
+                    rating,
+                    category
+                };
+
+                products.push(newProduct);
+                renderProducts(products); // Re-render with the new product
+                clearSellForm(); // Clear the input fields
+            } else {
+                alert("Please fill in all fields correctly.");
+            }
+        });
+
+        // Clear sell form inputs
+        function clearSellForm() {
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-image').value = '';
+            document.getElementById('product-rating').value = '';
+        }
+
+        // Initial render of products
+        renderProducts(products);
+    </script>
+</body>
+</html>
